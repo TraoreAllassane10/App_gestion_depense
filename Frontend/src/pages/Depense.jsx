@@ -4,17 +4,26 @@ import useAuth from "../hooks/useAuth";
 import useDepense from "../hooks/useDepense";
 import Input from "../components/Input";
 import { toast } from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import UpdateModal from "../components/UpdateModal";
 
 const Depense = () => {
   // const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   // Les states de depense
   const [montant, setMontant] = useState("");
   const [description, setDescription] = useState("");
+
   const [openModal, setOpenModal] = useState(false);
+  const [openUpdateModal, setOpenUpdateModal] = useState(false);
+
+  // L'id de la depense à modifier
+  const [idUpdate, setIdUpdate] = useState(0);
 
   const { logout } = useAuth();
-  const { allDepenses,createDepense, depenses, loading } = useDepense();
+  const { allDepenses, createDepense, deleteDepense, depenses, loading } =
+    useDepense();
 
   useEffect(() => {
     allDepenses();
@@ -35,7 +44,16 @@ const Depense = () => {
     // Enregistrement d'une depense
     createDepense(newDepense);
 
-    setOpenModal(false)
+    setOpenModal(false);
+  };
+
+  // Suppression d'une depense
+  const handleDelete = (id) => {
+    // Supprime la depense
+    deleteDepense(id);
+
+    // Rafraichissement de la page
+    navigate("/");
   };
 
   return (
@@ -81,10 +99,20 @@ const Depense = () => {
                 </div>
               </form>
 
-              <button className="btn" onClick={() => setOpenModal(v => !v)}>Close</button>
+              <button className="btn" onClick={() => setOpenModal((v) => !v)}>
+                Fermer
+              </button>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Modal de modification */}
+      {openUpdateModal && (
+        <UpdateModal
+          idUpdate={idUpdate}
+          setOpenUpdateModal={setOpenUpdateModal}
+        />
       )}
 
       <div className="card  text-neutral-content border-2 border-warning/10 bg-warning/5 p-5">
@@ -116,8 +144,21 @@ const Depense = () => {
                   {depense.montant.toLocaleString("XOF")} fcfa
                 </td>
                 <td className="flex gap-2">
-                  <button className="btn btn-info">Modifier</button>
-                  <button className="btn btn-error">Supprimer</button>
+                  <button
+                    className="btn btn-info"
+                    onClick={(v) => {
+                      setOpenUpdateModal((v) => !v);
+                      setIdUpdate(depense.id);
+                    }}
+                  >
+                    Modifier
+                  </button>
+                  <button
+                    className="btn btn-error"
+                    onClick={() => handleDelete(depense.id)}
+                  >
+                    Supprimer
+                  </button>
                 </td>
               </tr>
             ))}
