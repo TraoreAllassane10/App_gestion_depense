@@ -21,13 +21,29 @@ const Depense = () => {
   // L'id de la depense à modifier
   const [idUpdate, setIdUpdate] = useState(0);
 
+  // Controle de la page
+  const [currentPage, setCurrentPage] = useState(1);
+
   const { logout } = useAuth();
-  const { allDepenses, createDepense, deleteDepense, depenses, loading } =
-    useDepense();
+  const {
+    allDepenses,
+    createDepense,
+    deleteDepense,
+    depenses,
+    loading,
+    pagination,
+  } = useDepense();
 
   useEffect(() => {
-    allDepenses();
-  }, []);
+    allDepenses(currentPage);
+  }, [currentPage]);
+
+  // Fonction de changement de page
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= pagination.last_page) {
+      setCurrentPage(page);
+    }
+  };
 
   // creation d'une depense
   const handleSubmit = (e) => {
@@ -45,6 +61,9 @@ const Depense = () => {
     createDepense(newDepense);
 
     setOpenModal(false);
+
+    // Rafraichissement de la page
+    navigate("/");
   };
 
   // Suppression d'une depense
@@ -115,6 +134,7 @@ const Depense = () => {
         />
       )}
 
+      {/* Affichage des depenses */}
       <div className="card  text-neutral-content border-2 border-warning/10 bg-warning/5 p-5">
         <button
           className="btn btn-warning w-full mb-6"
@@ -165,6 +185,39 @@ const Depense = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Pagination */}
+      {pagination && (
+        <div className="flex justify-center gap-4 mt-4">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="btn btn-sm"
+          >
+            Précédent
+          </button>
+
+          {Array.from({ length: pagination.last_page }, (_, i) => i + 1).map(
+            (page) => (
+              <button
+                onClick={() => handlePageChange(page)}
+               key={page}
+                className={`btn btn-sm ${page === currentPage ? "btn-warning" : ""}`}
+              >
+                {page}
+              </button>
+            )
+          )}
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === pagination.last_page}
+            className="btn btn-sm"
+          >
+            Suivant
+          </button>
+        </div>
+      )}
     </div>
   );
 };

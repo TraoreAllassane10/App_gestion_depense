@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import Input from "./Input";
 import useDepense from "../hooks/useDepense";
+import { useNavigate } from "react-router-dom";
+
 
 const UpdateModal = ({ setOpenUpdateModal, idUpdate }) => {
-  const { findDepense,updateDepense, depense } = useDepense();
+  const { findDepense, updateDepense, depense } = useDepense();
+
+  const navigate = useNavigate();
 
   // Recuperation de la depense à modifier lors du rendu du modal
   useEffect(() => {
@@ -13,17 +17,17 @@ const UpdateModal = ({ setOpenUpdateModal, idUpdate }) => {
   // Dès que la depense est chargée, remplir le formulaire
   useEffect(() => {
     if (depense) {
-        setMontant(depense.montant)
-        setDescription(depense.description)
+      setMontant(depense.montant);
+      setDescription(depense.description);
     }
-  }, [depense])
+  }, [depense]);
 
   // Les states de depense
   const [montant, setMontant] = useState();
   const [description, setDescription] = useState();
 
   const handleSubmit = (e) => {
-     e.preventDefault();
+    e.preventDefault();
 
     if (montant == "" || description == "") {
       toast.error("Veuillez remplir tous les champs svp !");
@@ -37,6 +41,9 @@ const UpdateModal = ({ setOpenUpdateModal, idUpdate }) => {
     updateDepense(idUpdate, depense);
 
     setOpenUpdateModal(false);
+
+    // Rafraichissement de la page
+    navigate("/");
   };
 
   return (

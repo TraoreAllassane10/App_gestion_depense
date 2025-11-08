@@ -1,11 +1,11 @@
 import axios from "axios";
 
-export const getDepenses = async () => {
+export const getDepenses = async (page) => {
   try {
     // Le token de l'utilisateur connecté
     const token = localStorage.getItem("token");
 
-    return await axios.get("http://localhost:8000/api/depenses", {
+    return await axios.get(`http://localhost:8000/api/depenses?page=${page}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },

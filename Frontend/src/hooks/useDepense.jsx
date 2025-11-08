@@ -14,23 +14,29 @@ export default function useDepense() {
   const [loading, setLoading] = useState(false);
   const [depense, setDepense] = useState([]);
 
+  const [pagination, setPagination] = useState(null)
 
-  const allDepenses = async () => {
+
+  const allDepenses = async (page=1) => {
     // Lancement du chargement
     setLoading(true);
 
-    await getDepenses()
+    await getDepenses(page)
       .then((res) => {
         // Stop le chargement
         setLoading(false);
 
         // Si la recuperation passe avec succès
         if (res.data.success) {
+          console.log(res.data)
           setDepenses(res.data.data);
+
+          setPagination(res.data.pagination)
         }
       })
       .catch((err) => {
-        console.log(err);
+        console.error(err);
+        setLoading(false)
       });
   };
 
@@ -150,6 +156,7 @@ export default function useDepense() {
     deleteDepense,
     depenses,
     loading,
-    depense
+    depense,
+    pagination
   };
 }
