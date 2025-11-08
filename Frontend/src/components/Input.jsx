@@ -7,7 +7,7 @@ const Input = ({value, onChange, type, placeholder}) => {
       onChange={onChange}
       type={type ?? "text"}
       placeholder={placeholder}
-      className="input w-full"
+      className="input w-full text-white"
       required
     />
   );
